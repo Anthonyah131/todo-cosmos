@@ -1,0 +1,54 @@
+extends layout
+
+block content
+  h1 #{title}
+  br
+  div(style="display:flex;flex-direction:row;")
+    form(action="/all", method="get", style="padding-bottom:20px; padding-top:20px;")
+      button.btn.btn-primary(type="submit", style="margin-right:10px;") All
+    form(action="/complete", method="get", style="padding-bottom:20px; padding-top:20px;")
+      button.btn.btn-primary(type="submit", style="margin-right:10px;") Complete 
+    form(action="/", method="get", style="padding-bottom:20px; padding-top:20px;")
+      button.btn.btn-primary(type="submit") Incomplete
+  br
+  table.table.table-stripped.table-bordered
+    tr 
+      td Nombre 
+      td Categoria 
+      td Fecha  
+      td Complete
+    if(typeof tasks === "undefined")
+      tr 
+        td 
+    else 
+      each task in tasks 
+        tr 
+          td #{task.name}
+          td #{task.category}
+          - var date = new Date(task.date);
+          - var day = date.getDate();
+          - var month = date.getMonth() + 1;
+          - var year = date.getFullYear();
+          td #{day + "/" + month + "/" + year}
+          td
+            form(action="/completar", method="post")
+              if(task.completed)
+                button(name="#{task.id}", value="#{task.completed}", onclick=() => {this.value = !this.value}, style="background-color:transparent;border:none;text-decoration:line-through;") Complete
+                //- input(type="checkbox", name="#{task.id}", value="#{task.completed}", checked=!task.completed)
+              else 
+                button(name="#{task.id}", value="#{task.completed}", onclick=() => {this.value = !this.value}, style="background-color:transparent;border:none;text-decoration:none;") Incomplete
+                //- input(type="checkbox", name="#{task.id}", value="#{task.completed}", checked=task.completed)
+          td
+            form(action="/delete", method="post")
+              button(name="#{task.id}", type="submit") Delete
+
+
+
+  hr
+  form.well(action="/agregar", method="post")
+    label Item Name: 
+    input(name="name", type="textbox")
+    label Item Category: 
+    input(name="category", type="textbox")
+    br
+    button.btn(type="submit") Añadir tarea 
